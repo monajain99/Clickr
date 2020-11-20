@@ -8,7 +8,9 @@ Built using React, Redux for the frontend and Express, PostgreSQL + Sequelize fo
 
 Features
 User authentication
+
 Sign-in and Sign-up
+
 Sign-in as a Demo User
 
 Photos:
