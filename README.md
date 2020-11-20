@@ -27,4 +27,5 @@ Bonus: Favorites
 Users should be able to create favorite album based of the tag
 
 Bonus: Follows
+
 ---Not Sure---
