@@ -11,18 +11,20 @@ User authentication
 Sign-in and Sign-up
 Sign-in as a Demo User
 
-
-
-● Photos:
+Photos:
 Users should be able to create, edit, delete upload photos
-● Albums:
+
+Albums:
 Users should be able to create, edit, delete upload albums
-● Comments:
+
+Comments:
 Users should be able to create, edit, delete comments on albums
-● Tags:
+
+Tags:
 Users should be able to create, edit, delete tags on photos
 
-● Bonus: Favorites
+Bonus: Favorites
 Users should be able to create favorite album based of the tag
-● Bonus: Follows
+
+Bonus: Follows
 ---Not Sure---
