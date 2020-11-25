@@ -3,6 +3,7 @@ import * as sessionActions from "../../store/session";
 import { useDispatch, useSelector } from "react-redux";
 import { Redirect, useHistory } from "react-router-dom";
 import * as photoActions from "../../store/photos";
+import { image } from "faker";
 
 
 const UploadFormPage = () => {
@@ -11,6 +12,8 @@ const UploadFormPage = () => {
   const history = useHistory();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [photoUrl, setPhotoUrl] = useState("");
+
   const [errors, setErrors] = useState([]);
 
   console.log(user)
@@ -58,8 +61,18 @@ const UploadFormPage = () => {
               />
             </div>
             <div className="form_input-container">
+              {/* <label>Password</label> */}
+              <input
+                placeholder="Enter Image Url"
+                type="text"
+                value={photoUrl}
+                onChange={(e) => setPhotoUrl(e.target.value)}
+                required
+              />
+            </div>
+            <div className="form_input-container">
               <button className="loginbtn" type="submit">
-                Upload 
+                Upload
               </button>
               <div></div>
             </div>

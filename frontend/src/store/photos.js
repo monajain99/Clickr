@@ -13,14 +13,18 @@ const postBody = (photos) => {
   }
 }
 
-export const postPhoto = ({
+export const postPhoto = (
 title,
 description,
 userId,
-}
+photoUrl
 ) => async (dispatch) =>{
   try {
-    const res = await fetch("/api/photos", {method: "POST", body: JSON.stringify({title, description, userId}) });
+    console.log(title, description, userId, photoUrl);
+    const res = await fetch("/api/photos", {
+      method: "POST",
+      body: JSON.stringify({ title, description, userId, photoUrl }),
+    });
     const photos = res.data;
     dispatch(postBody(photos));
   } catch (err) {
