@@ -10,16 +10,27 @@ const upload = multer({ storage: storage });
 const stream = require("stream");
 const cloudinary = require("cloudinary").v2;
 
-
-
 router.get(
   "/",
   handleValidationErrors,
   asyncHandler(async (req, res, next) => {
-    const photos = await Photo.findAll({ include: User });
-    res.json({ photos });
+    const { resources } = await cloudinary.search.expression('folder:clickr').sort_by('public_id', 'desc').max_results(30).execute()
+    console.log(resources);
+    const publicIds = resources.map((file) => file.public_id)
+    console.log("hiiiiiiiii", publicIds);
+    res.send(publicIds)
+    
   })
 );
+
+// router.get(
+//   "/",
+//   handleValidationErrors,
+//   asyncHandler(async (req, res, next) => {
+//     const photos = await Photo.findAll({ include: User });
+//     res.json({ photos });
+//   })
+// );
 
 router.get(
   "/:id",
@@ -53,33 +64,51 @@ router.post(
   "/",
   handleValidationErrors,
   asyncHandler(async (req, res, next) => {
-    const { title, name, description } = req.body;
-    const photo = db.Photo.build({
-      title,
-      description,
-      name,
-    });
-    // console.log(title);
-    const validatorErrors = validationResult(req);
     try {
-      if (validatorErrors.isEmpty()) {
-        await photo.save();
-        res.redirect("/");
-      } else {
-        const errors = validatorErrors.array().map((error) => error.msg);
-        return errors;
-      }
-    } catch (err) {
-      if (
-        err.name === "SequelizeValidationError" ||
-        err.name === "SequelizeUniqueConstraintError"
-      ) {
-        const errors = err.errors.map((error) => error.message);
-        return errors;
-      } else {
-        next(err);
-      }
+      const fileStr = req.body.data
+      const uploadedResponse = await cloudinary.uploader.upload(fileStr,{
+        upload_preset: 'clicr'
+      })
+      console.log(uploadedResponse)
+      res.json({msg: "uploaded"})
+    } catch (error) {
+      console.error(error)
+      res.status(500).json({err:'Error'})
     }
+
+    // router.post(
+    //   "/",
+    //   handleValidationErrors,
+    //   asyncHandler(async (req, res, next) => {
+    //     const { title, name, description, userId, photoUrl } = req.body;
+    //     const photo = Photo.build({
+    //       title,
+    //       description,
+    //       name,
+    //       photoUrl,
+    //       userId
+    //     });
+    // console.log(title);
+    //const validatorErrors = validationResult(req);
+    // try {
+    // if (validatorErrors.isEmpty()) {
+    // await photo.save();
+    // res.json({ message: "success" });
+    // } else {
+    // const errors = validatorErrors.array().map((error) => error.msg);
+    // return errors;
+    // }
+    // } catch (err) {
+    //   if (
+    //     err.name === "SequelizeValidationError" ||
+    //     err.name === "SequelizeUniqueConstraintError"
+    //   ) {
+    //     const errors = err.errors.map((error) => error.message);
+    //     return errors;
+    //   } else {
+    //     next(err);
+    //   }
+    // }
   })
 );
 

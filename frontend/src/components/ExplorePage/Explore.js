@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Image } from "cloudinary-react";
 import { Link, Redirect, useHistory } from "react-router-dom";
 import { Container } from "../../styled/Container";
-
+import { useSelector, useDispatch } from "react-redux";
+import * as photoActions from "../../store/photos";
 
 export default function PhotoFeed() {
   const [imageIds, setImageIds] = useState();

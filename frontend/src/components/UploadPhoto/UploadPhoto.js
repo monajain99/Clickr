@@ -6,61 +6,68 @@ import * as photoActions from "../../store/photos";
 import { fetch } from "../../../src/store/csrf";
 
 
-export default function UploadFormPage () {
-  const [fileInputState, setFileInputState] = useState('')
+const UploadFormPage = () => {
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.session.user)
+  const history = useHistory()
+  const [title, setTitle] = useState("");  
+  const [description, setDescription] = useState("");
+  const [errors, setErrors] = useState([]);
+  
+  
+  const [fileInputState, setFileInputState] = useState("");
   const [previewSource, setPreviewSource] = useState("");
-  const [selectedFile, setSelectedFile] = useState('')
+  const [selectedFile, setSelectedFile] = useState("");
   const handleFileInputChange = (e) => {
-    const file = e.target.files[0]
-    previewFile(file)
-  }
+    const file = e.target.files[0];
+    previewFile(file);
+  };
 
   const previewFile = (file) => {
-    const reader = new FileReader()
-    reader.readAsDataURL(file)
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
     reader.onloadend = () => {
-      setPreviewSource(reader.result)
-    }
-  }
+      setPreviewSource(reader.result);
+    };
+  };
 
   const handleSubmitFile = (e) => {
-    e.preventDefault()
-    if (!previewSource) return
-    uploadImage(previewSource)
-  }
+    e.preventDefault();
+    if (!previewSource) return;
+    uploadImage(previewSource);
+  };
   const uploadImage = async (base64EncodedImage) => {
     try {
       await fetch("/api/photos", {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify({ data: base64EncodedImage }),
-        headers: { 'Content-tyoe': 'application/json' },
-      })
+        headers: { "Content-tyoe": "application/json" },
+      });
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
-
-  }
+  };
   return (
     <div>
       <h1>Upload</h1>
-      <form onSubmit={handleSubmitFile} classname="form"> 
+      <form onSubmit={handleSubmitFile} classname="form">
         <input
           type="file"
           name="image"
           onChange={handleFileInputChange}
           value={fileInputState}
-          className="form-input" 
-          />
-        <button className='btn' type="submit">
+          className="form-input"
+        />
+        <button className="btn" type="submit">
           submit
-           </button>
+        </button>
       </form>
-      {previewSource && (<img src={previewSource} alt="chosen"
-        style={{ height: '300px' }} />
+      {previewSource && (
+        <img src={previewSource} alt="chosen" style={{ height: "300px" }} />
       )}
     </div>
-  )
-}
+  );
+};
 
 
 // const UploadFormPage = () => {
@@ -140,4 +147,4 @@ export default function UploadFormPage () {
 //   );
 // };
 
-// export default UploadFormPage;
+ export default UploadFormPage;
