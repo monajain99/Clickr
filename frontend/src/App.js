@@ -8,6 +8,7 @@ import PhotoFeed from "./components/ExplorePage/Explore"
 import * as sessionActions from "./store/session";
 import Navigation from "./components/Navigation/index"
 import UploadFormPage from "./components/UploadPhoto/UploadPhoto"
+import Images from "./components/Images";
 
 //const backgroud = [abc , bdc]
 
