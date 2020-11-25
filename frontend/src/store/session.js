@@ -2,7 +2,8 @@ import { fetch } from "./csrf";
 
 const LOGIN_USER = "LOGIN_USER";
 const SET_SESSION = "SET_SESSION";
-const DESTROY_SESSION = "DESTROY_SESSION";
+const END_SESSION = "END_SESSION";
+const RECEIVE_ERRORS ="RECEIVE-ERRORS"
 
 const setSession = (user) => {
   return {
@@ -11,13 +12,18 @@ const setSession = (user) => {
   };
 };
 
-const destroySession = () => {
+const endSession = () => {
   return {
-    type: DESTROY_SESSION,
+    type: END_SESSION,
   };
 };
 
-export const loginUser = ({ credential, password }) => async (dispatch) => {
+export const receiveErrors = (errors) => ({
+  type: RECEIVE_ERRORS,
+  errors,
+});
+
+export const login = ({ credential, password }) => async (dispatch) => {
   try {
     const res = await fetch("/api/session", {
       method: "POST",
@@ -61,7 +67,7 @@ export const logout = () => async (dispatch) => {
   const response = await fetch("/api/session", {
     method: "DELETE",
   });
-  dispatch(destroySession());
+  dispatch(endSession());
   return response;
 };
 
@@ -69,7 +75,7 @@ const sessionReducer = (state = {}, action) => {
   switch (action.type) {
     case SET_SESSION:
       return { ...state, user: action.payload };
-    case DESTROY_SESSION:
+    case END_SESSION:
       return { ...state, user: null };
     default:
       return state;

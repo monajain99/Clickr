@@ -34,6 +34,7 @@ export const fetch = async (url, options = {}) => {
   return res;
 };
 
+
 // call this to get the "XSRF-TOKEN" cookie, should only be used in development
 export function restoreCSRF() {
   return fetch('/api/csrf/restore');

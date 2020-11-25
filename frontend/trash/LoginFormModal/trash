@@ -1,0 +1,53 @@
+--------transition-----------
+form {margin-top:50px;padding:20px;border:solid 1px #dedede;border-radius:5px;width:350px;margin:50px auto;}
+form fieldset {border:none;position:relative;}
+
+input.btn-primary {background-color:#51A2DA;border-color:#51A2DA;}
+
+form fieldset input {
+    padding:25px 12px 6px 12px !important;
+    height:45px !important;
+  border:none !important;
+  box-shadow:none !important;
+  border-bottom:solid 1px #dedede !important;
+}
+
+form fieldset label {
+  position: absolute;
+  top: 13px;
+  left: 13px;
+  color: #909090;
+    font-weight:300;
+  -webkit-transform: translate3d(0, 0, 0);
+          transform: translate3d(0, 0, 0);
+  -webkit-transition: all 0.2s ease-in-out;
+          transition: all 0.2s ease-in-out;
+}
+
+form fieldset input:valid + label, form fieldset input:focus + label {
+  color: #51A2DA;
+  /*font-weight: 700;*/
+  /*font-size: 12px;*/
+  -webkit-transform: translate3d(0, -10px, 0);
+          transform: translate3d(0, -10px, 0);
+}
+------------transition------------------
+
+
+<form>
+    <fieldset>
+      <input id="firstName" name="firstName" type="text" autocomplete="off" required="" class="form-control">
+      <label for="firstName">Your bank account number</label>
+    </fieldset>
+    <fieldset>
+      <input id="lastName" name="lastName" type="text" autocomplete="off" required="" class="form-control">
+      <label for="lastName">Your credit card number</label>
+    </fieldset>
+    <fieldset>
+      <input id="email" name="email" type="text" autocomplete="off" required="" class="form-control">
+      <label for="email">Your VK account ID</label>
+    </fieldset>
+  <div class="text-center" style="margin-top:10px;">
+    <input type="button" class="btn btn-primary btn-block" value="Submit" />
+  </div>
+  </form>

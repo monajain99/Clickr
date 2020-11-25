@@ -4,8 +4,13 @@ const cors = require("cors");
 const csurf = require("csurf");
 const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
-const { ValidationError } = require("sequelize");
+const createError = require("http-errors");
+const bodyParser = require("body-parser");
 
+const { ValidationError } = require("sequelize");
+const { requireAuth } = require("./utils/auth");
+
+const path = require("path");
 const routes = require("./routes");
 const { environment } = require("./config");
 const isProduction = environment === "production";
@@ -16,6 +21,8 @@ app.use(morgan("dev"));
 
 app.use(cookieParser());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, "public")));
 
 // Security Middleware
 if (!isProduction) {
@@ -62,13 +69,21 @@ app.use((err, _req, _res, next) => {
 // Error formatter
 app.use((err, _req, res, _next) => {
   res.status(err.status || 500);
-  console.error(err);
-  res.json({
-    title: err.title || 'Server Error',
-    message: err.message,
-    errors: err.errors,
-    stack: isProduction ? null : err.stack,
-  });
+  if (err instanceof AuthenticationError) {
+    res.clearCookie("token");
+  }
+  if (process.env.NODE_ENV === "production") {
+    res.json({
+      message: err.message,
+      error: { errors: err.errors },
+    });
+  } else
+    res.json({
+      title: err.title || "Server Error",
+      message: err.message,
+      errors: err.errors,
+      stack: isProduction ? null : err.stack,
+    });
 });
 
 module.exports = app;

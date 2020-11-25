@@ -7,7 +7,7 @@ import App from "./App";
 
 import configureStore from "./store";
 import { restoreCSRF, fetch } from "./store/csrf";
-import { ModalProvider } from "./context/Modal";
+//import { ModalProvider } from "./context/Modal";
 
 import * as sessionActions from './store/session';
 
@@ -21,16 +21,25 @@ if (process.env.NODE_ENV !== 'production') {
   window.sessionActions = sessionActions;
 }
 
+function Root() {
+  return (
+    <Provider store={store}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </Provider>
+  );
+}
 
 ReactDOM.render(
   <React.StrictMode>
-    <Provider store={store}>
-      <ModalProvider>
+    {/* <Provider store={store}> */}
+      {/* <ModalProvider> */}
         <BrowserRouter>
-          <App />
+          <Root />
         </BrowserRouter>
-      </ModalProvider>
-    </Provider>
+      {/* </ModalProvider> */}
+    {/* </Provider> */}
   </React.StrictMode>,
   document.getElementById("root")
 );

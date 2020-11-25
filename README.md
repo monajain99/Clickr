@@ -11,10 +11,15 @@ Built using React, Redux for the frontend and Express, PostgreSQL + Sequelize fo
     - Sign-in and Sign-up
     - Sign-in as a Demo User
 
-    --splash page
-    --Photo Feed
-    --single photo page
-    --upload/delete photo
+2. splash Page
+    - Sign-in and Sign-up
+    - Sign-in as a Demo User
+
+3.  --Photo Feed
+
+
+4.  --single photo page
+5.  --upload/delete photo
 
 
     bonus
@@ -22,9 +27,7 @@ Built using React, Redux for the frontend and Express, PostgreSQL + Sequelize fo
     --comments 
     --tags
 
-2. splash Page
-    - Sign-in and Sign-up
-    - Sign-in as a Demo User
+
   
 2. Photos:
     - Users should be able to create photos
