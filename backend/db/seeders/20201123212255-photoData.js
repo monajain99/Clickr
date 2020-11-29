@@ -30,7 +30,7 @@ module.exports = {
   down: (queryInterface, Sequelize) => {
     const Op = Sequelize.Op;
     return queryInterface.bulkDelete(
-      "Users",
+      "Photos",
       {
         title: { [Op.in]: ["My Photo", "My Photo1", "Photo2"] },
       },

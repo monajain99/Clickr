@@ -25,7 +25,6 @@ const router = require("express").Router();
 // router.post(
 //   "/search",
 //   asyncHandler(async (req, res) => {
-//     console.log(req);
 //   })
 // );
 module.exports = router;

@@ -4,7 +4,7 @@ const asyncHandler = require("express-async-handler");
 
 const { handleValidationErrors } = require("../../utils/validation");
 const { setTokenCookie, requireAuth } = require("../../utils/auth");
-const { User } = require("../../db/models");
+const { User, Photo, Comment } = require("../../db/models");
 
 const router = express.Router();
 
@@ -40,5 +40,28 @@ router.post(
     });
   })
 );
+
+router.get(
+  "/",
+  asyncHandler(async (req, res) => {
+    const users = await User.findAll({ order: [["createdAt", "DESC"]] });
+
+    res.json(users);
+  })
+);
+
+router.get(
+  "/:id/photos",
+  asyncHandler(async function (req, res, _next) {
+    const userId = req.params.id;
+    const photos = await Photo.findAll({
+      where: {
+        userId,
+      },
+    });
+    res.json({ photos });
+  })
+);
+
 
 module.exports = router;

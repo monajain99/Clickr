@@ -2,6 +2,7 @@ const router = require("express").Router();
 const sessionRouter = require("./session.js");
 const usersRouter = require("./users.js");
 const photoRouter = require("./photos.js");
+const profileRouter = require("./profile.js");
 
 
 // // GET /api/set-token-cookie
@@ -45,6 +46,8 @@ router.post("/test", function (req, res) {
 router.use("/session", sessionRouter);
 
 router.use("/users", usersRouter);
+
+router.use("/profile", profileRouter);
 
 router.use("/photos", photoRouter);
 

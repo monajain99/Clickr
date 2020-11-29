@@ -1,7 +1,7 @@
 const express = require("express");
 const asyncHandler = require("express-async-handler");
 const { handleValidationErrors } = require("../../utils/validation");
-const { Photo, User } = require("../../db/models");
+const { Photo, User, Comment } = require("../../db/models");
 const router = express.Router();
 
 const multer = require("multer");
@@ -10,210 +10,91 @@ const upload = multer({ storage: storage });
 const stream = require("stream");
 const cloudinary = require("cloudinary").v2;
 
-router.get(
-  "/",
-  handleValidationErrors,
-  asyncHandler(async (req, res, next) => {
-    const { resources } = await cloudinary.search.expression('folder:clickr').sort_by('public_id', 'desc').max_results(30).execute()
-    console.log(resources);
-    const publicIds = resources.map((file) => file.public_id)
-    console.log("hiiiiiiiii", publicIds);
-    res.send(publicIds)
-    
-  })
-);
-
-// router.get(
-//   "/",
-//   handleValidationErrors,
-//   asyncHandler(async (req, res, next) => {
-//     const photos = await Photo.findAll({ include: User });
-//     res.json({ photos });
-//   })
-// );
-
-router.get(
-  "/:id",
-  handleValidationErrors,
-  asyncHandler(async (req, res, next) => {
-    const photoId = req.params.id;
-    const photo = await Photo.findByPk(photoId, { include: User });
-
-    res.json({ photo });
-  })
-);
-
-router.delete(
-  "/:id",
-  asyncHandler(async (req, res, next) => {
-    const photoId = req.params.id;
-    const photoToDelete = await Photo.findByPk(photoId);
-    if (!photoToDelete) {
-      const err = new Error("Photo not found!");
-      // err.status = 404;
-      next(err);
-      return;
-    }
-
-    await photoToDelete.destroy();
-    res.json({ message: "success" });
-  })
-);
-
+//cloud post 
 router.post(
   "/",
   handleValidationErrors,
   asyncHandler(async (req, res, next) => {
     try {
-      const fileStr = req.body.data
-      const uploadedResponse = await cloudinary.uploader.upload(fileStr,{
-        upload_preset: 'clicr'
-      })
-      console.log(uploadedResponse)
-      res.json({msg: "uploaded"})
+      const { title, description, userId, photoUrl } = req.body;
+      const uploadedResponse = await cloudinary.uploader.upload(photoUrl, {
+        upload_preset: "clicr",
+      });
+      
+          const photo = Photo.build({
+            title,
+            description,
+            photoUrl: uploadedResponse.url,
+            userId,
+          });
+          await photo.save();
+
+      res.json({ photo });
     } catch (error) {
       console.error(error)
-      res.status(500).json({err:'Error'})
+      res.status(500).json({ err: 'Error' })
     }
+  })
+)
 
-    // router.post(
-    //   "/",
-    //   handleValidationErrors,
-    //   asyncHandler(async (req, res, next) => {
-    //     const { title, name, description, userId, photoUrl } = req.body;
-    //     const photo = Photo.build({
-    //       title,
-    //       description,
-    //       name,
-    //       photoUrl,
-    //       userId
-    //     });
-    // console.log(title);
-    //const validatorErrors = validationResult(req);
-    // try {
-    // if (validatorErrors.isEmpty()) {
-    // await photo.save();
-    // res.json({ message: "success" });
-    // } else {
-    // const errors = validatorErrors.array().map((error) => error.msg);
-    // return errors;
-    // }
-    // } catch (err) {
-    //   if (
-    //     err.name === "SequelizeValidationError" ||
-    //     err.name === "SequelizeUniqueConstraintError"
-    //   ) {
-    //     const errors = err.errors.map((error) => error.message);
-    //     return errors;
-    //   } else {
-    //     next(err);
-    //   }
-    // }
+//get from database
+
+router.get(
+  "/",
+  handleValidationErrors,
+  asyncHandler(async (req, res, next) => {
+    const photos = await Photo.findAll({ include: [{ all: true }] });
+    res.json({ photos });
   })
 );
 
 
+// single get from database 
+router.get(
+  "/:id",
+  handleValidationErrors,
+  asyncHandler(async (req, res, next) => {
+    const photoId = req.params.id;
+    const photo = await Photo.findByPk(photoId, { include: [{ all: true }] });
+    
+    res.json({ photo });
+    console.log(photo.Comments[0])
+ 
 
-// router.post(
-//   "/",
-//   upload.single("image"),
-//   csrfProtection,
-//   questionValidators,
-//   asyncHandler(async (req, res, next) => {
-//     if (req.file) {
-//       const { title, content } = req.body;
-//       const userId = res.locals.user.id;
-//       const question = db.Question.build({
-//         title,
-//         content,
-//         userId,
-//       });
-//       let upload_stream = cloudinary.uploader.upload_stream(async function (
-//         err,
-//         result
-//       ) {
-//         let image = result.url;
-//         question.image = result.url;
-//         const validatorErrors = validationResult(req);
-//         try {
-//           if (validatorErrors.isEmpty()) {
-//             await question.save();
-//             res.redirect("/");
-//             return res.send();
-//           } else {
-//             const errors = validatorErrors.array().map((error) => error.msg);
-//             res.render("new-question", {
-//               title: title,
-//               content,
-//               errors,
-//               csrfToken: req.csrfToken(),
-//             });
-//             return res.send();
-//           }
-//         } catch (err) {
-//           if (
-//             err.name === "SequelizeValidationError" ||
-//             err.name === "SequelizeUniqueConstraintError"
-//           ) {
-//             const errors = err.errors.map((error) => error.message);
-//             res.render("new-question", {
-//               title: "New Question",
-//               question,
-//               errors,
-//               csrfToken: req.csrfToken(),
-//             });
-//             return res.send();
-//           } else {
-//             next(err);
-//           }
-//         }
-//       });
-//       var bufferStream = new stream.PassThrough();
-//       bufferStream.end(req.file.buffer);
-//       bufferStream.pipe(upload_stream);
-//     } else {
-//       const { title, content } = req.body;
-//       const userId = res.locals.user.id;
-//       const question = db.Question.build({
-//         title,
-//         content,
-//         userId,
-//       });
-//       const validatorErrors = validationResult(req);
-//       try {
-//         if (validatorErrors.isEmpty()) {
-//           await question.save();
-//           res.redirect("/");
-//           return res.send();
-//         } else {
-//           const errors = validatorErrors.array().map((error) => error.msg);
-//           res.render("new-question", {
-//             title: title,
-//             content,
-//             errors,
-//             csrfToken: req.csrfToken(),
-//           });
-//           return res.send();
-//         }
-//       } catch (err) {
-//         if (
-//           err.name === "SequelizeValidationError" ||
-//           err.name === "SequelizeUniqueConstraintError"
-//         ) {
-//           const errors = err.errors.map((error) => error.message);
-//           res.render("new-question", {
-//             title: "New Question",
-//             question,
-//             errors,
-//             csrfToken: req.csrfToken(),
-//           });
-//           return res.send();
-//         } else {
-//           next(err);
-//         }
-//       }
-//     }
-//   })
-// );
+  })
+);
+
+//  get from database by user
+router.get(
+  "/",
+  handleValidationErrors,
+  asyncHandler(async (req, res, next) => {
+    const photo = await Photo.findByUserID(userId, {
+      include: User,
+      include: Comment,
+    });
+
+    res.json({ photo });
+  })
+);
+
+// export const findByUserID = (id) => async (dispatch) => {
+//   const response = await fetch(`/api/photos/${id}`);
+//   dispatch(userPhotos(response.data));
+//   return response;
+// };
+
+
+
+router.delete(
+  "/:id",
+  asyncHandler(async (req, res) => {
+    const id = req.params.id;
+    const message = await Photo.removePhoto({ id });
+    return res.json({
+      message,
+    });
+  })
+);
 
 module.exports = router;
