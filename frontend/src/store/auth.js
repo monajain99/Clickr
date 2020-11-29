@@ -18,7 +18,6 @@ export const logoutUser = () => {
 
 export const login = (username, password) => {
   return async (dispatch) => {
-    // console.log(username)
     const res = await fetch("/api/session", {
       method: "put",
       headers: {

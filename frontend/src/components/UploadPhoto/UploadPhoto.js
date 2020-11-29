@@ -7,22 +7,39 @@ import { fetch } from "../../../src/store/csrf";
 
 
 const UploadFormPage = () => {
+  //database
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.session.user)
-  const history = useHistory()
-  const [title, setTitle] = useState("");  
+  const user = useSelector((state) => state.session.user);
+  const history = useHistory();
+  const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [errors, setErrors] = useState([]);
-  
-  
+  const [redirect, setRedirect] = useState(false)
+
+  //cloudinary
   const [fileInputState, setFileInputState] = useState("");
   const [previewSource, setPreviewSource] = useState("");
   const [selectedFile, setSelectedFile] = useState("");
+
+  if (!user) return <Redirect to="/" />;
+
+  //database
+  const handleDataSubmit = (e) => {
+    e.preventDefault();
+    setErrors([]);
+    return dispatch(photoActions.postPhoto(title, description, user.id)).catch(
+      (res) => {
+        if (res.data && res.data.errors) setErrors(res.data.errors);
+      }
+    );
+  };
+
   const handleFileInputChange = (e) => {
     const file = e.target.files[0];
     previewFile(file);
   };
-
+  
+  //preview cloud
   const previewFile = (file) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -30,27 +47,34 @@ const UploadFormPage = () => {
       setPreviewSource(reader.result);
     };
   };
-
-  const handleSubmitFile = (e) => {
+  
+  //cloudinary
+  const handleCloudSubmitFile = (e) => {
     e.preventDefault();
     if (!previewSource) return;
-    uploadImage(previewSource);
+    dispatch(photoActions.postPhoto(title, description, user.id, previewSource)).then(() => {
+      alert("File Uploaded");
+      return <Redirect to="/explore" />
+    }).catch(() => {
+      alert('Error')
+      }
+        
+      //   (res) => {
+      //     console.log("rrrrreeessss", res)
+      //     if (res.data && res.data.errors);
+      //     <Redirect to="/explore" />;
+      //  } 
+     );
   };
-  const uploadImage = async (base64EncodedImage) => {
-    try {
-      await fetch("/api/photos", {
-        method: "POST",
-        body: JSON.stringify({ data: base64EncodedImage }),
-        headers: { "Content-tyoe": "application/json" },
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  };
+
+ if (redirect) {
+   return <Redirect to="/explore" />;
+ }
+
+  
   return (
-    <div>
-      <h1>Upload</h1>
-      <form onSubmit={handleSubmitFile} classname="form">
+    <div align="center">
+      <form onSubmit={handleCloudSubmitFile} className="form">
         <input
           type="file"
           name="image"
@@ -61,6 +85,21 @@ const UploadFormPage = () => {
         <button className="btn" type="submit">
           submit
         </button>
+
+        <input
+          placeholder="Enter Title"
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          required
+        />
+        <input
+          placeholder="Enter Description"
+          type="text"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          required
+        />
       </form>
       {previewSource && (
         <img src={previewSource} alt="chosen" style={{ height: "300px" }} />
@@ -68,83 +107,5 @@ const UploadFormPage = () => {
     </div>
   );
 };
-
-
-// const UploadFormPage = () => {
-//   const dispatch = useDispatch();
-//   const user = useSelector((state) => state.session.user);
-//   const history = useHistory();
-//   const [title, setTitle] = useState("");
-//   const [description, setDescription] = useState("");
-//   const [photoUrl, setPhotoUrl] = useState("");
-
-//   const [errors, setErrors] = useState([]);
-
-//   console.log(user)
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     setErrors([]);
-//     return dispatch(photoActions.postPhoto(title, description, user.id)).catch(
-//       (res) => {
-//         if (res.data && res.data.errors) setErrors(res.data.errors);
-//       }
-//     );
-//   };
-
-//   return (
-//     <div align="center">
-//       <div className="loginform_container">
-//         <form onSubmit={handleSubmit} className="home_content-form">
-//           <div className="form">
-//             <ul>
-//               {errors.map((error, idx) => (
-//                 <li key={idx}>{error}</li>
-//               ))}
-//             </ul>
-//             <h1 className="loginform_title">Clickr</h1>
-//             <div className="loginform_subheading">Upload Image</div>
-//             <div className="form_input-container">
-//               {/* <label>Username or Email</label> */}
-//               <br />
-//               <input
-//                 placeholder="Enter Title"
-//                 type="text"
-//                 value={title}
-//                 onChange={(e) => setTitle(e.target.value)}
-//                 required
-//               />
-//             </div>
-//             <div className="form_input-container">
-//               {/* <label>Password</label> */}
-//               <input
-//                 placeholder="Enter Description"
-//                 type="text"
-//                 value={description}
-//                 onChange={(e) => setDescription(e.target.value)}
-//                 required
-//               />
-//             </div>
-//             <div className="form_input-container">
-//               {/* <label>Password</label> */}
-//               <input
-//                 placeholder="Enter Image Url"
-//                 type="text"
-//                 value={photoUrl}
-//                 onChange={(e) => setPhotoUrl(e.target.value)}
-//                 required
-//               />
-//             </div>
-//             <div className="form_input-container">
-//               <button className="loginbtn" type="submit">
-//                 Upload
-//               </button>
-//               <div></div>
-//             </div>
-//           </div>
-//         </form>
-//       </div>
-//     </div>
-//   );
-// };
 
  export default UploadFormPage;

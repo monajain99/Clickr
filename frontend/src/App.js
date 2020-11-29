@@ -9,6 +9,8 @@ import * as sessionActions from "./store/session";
 import Navigation from "./components/Navigation/index"
 import UploadFormPage from "./components/UploadPhoto/UploadPhoto"
 import Images from "./components/Images";
+import SinglePhoto from "./components/SinglePhoto"
+import PhotoFeedByUser from "./components/MyPage/myPage";
 
 //const backgroud = [abc , bdc]
 
@@ -30,7 +32,6 @@ function App() {
   // })
 
   const backgroundClass = () => {
-    console.log(location)
     if (
       location.pathname === "/" ||
       location.pathname === "/signup" ||
@@ -39,12 +40,24 @@ function App() {
       return "idbackground";
     } 
     return ''
- }
+  }
+  
+  const inspire = () => {
+    if (
+      location.pathname === "/" ||
+      location.pathname === "/signup" ||
+      location.pathname === "/login"
+    ) {
+      return <h1>Inspire and Get Inspired</h1>;
+    }
+    return "";
+  };
 
  
     return (
       <div className="wrapper">
         <div className={backgroundClass()}>
+          <div className={inspire()}></div>
           <>
             <Navigation />
             <Switch>
@@ -60,7 +73,10 @@ function App() {
               <Route exact path="/uploadPhoto">
                 <UploadFormPage />
               </Route>
-              <Route exact path="/photo/:id" component={PhotoFeed}></Route>
+              <Route exact path="/photo/:id" component={SinglePhoto}></Route>
+              <Route exact path="/myphotos">
+                <PhotoFeedByUser />
+              </Route>
             </Switch>
           </>
         </div>

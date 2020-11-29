@@ -16,7 +16,6 @@ const LoginFormPage = () => {
   
  
   if (user) return <Redirect to="/explore" />;
-  // console.log(user)
   const handleSubmit = (e) => {
     e.preventDefault();
     setErrors([]);

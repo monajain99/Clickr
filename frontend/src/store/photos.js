@@ -1,18 +1,21 @@
 import { fetch } from "./csrf";
+import * as commentActions from './comment';
 
-const RECEIVE_ALL_PHOTOS = "RECEIVE_ALL_PHOTOS";
-const RECEIVE_PHOTOS_BY_USER = "RECEIVE_PHOTOS_BY_USER";
-const RECEIVE_PHOTO = "RECEIVE_PHOTO";
-const DELETE_PHOTO = "DELETE_PHOTO";
-const POST_PHOTO = "POST_PHOTO"
 
-const postBody = (photos) => {
+const UPDATE_STATE = "UPDATE_STATE";
+const GET_STATE = "GET_STATE";
+
+
+//post photo action
+const POST_PHOTO = "POST_PHOTO";
+const postBody = (photo) => {
   return {
     type: POST_PHOTO,
-    photos
+    photo
   }
 }
 
+//post to cloudinary and database thunk
 export const postPhoto = (
 title,
 description,
@@ -20,25 +23,27 @@ userId,
 photoUrl
 ) => async (dispatch) =>{
   try {
-    console.log(title, description, userId, photoUrl);
     const res = await fetch("/api/photos", {
       method: "POST",
       body: JSON.stringify({ title, description, userId, photoUrl }),
     });
-    const photos = res.data;
-    dispatch(postBody(photos));
+    const photo = res.data;
+    dispatch(postBody(photo));
   } catch (err) {
     console.error(err);
   }
-};
+  };
 
+
+// receive all photos action
+const RECEIVE_ALL_PHOTOS = "RECEIVE_ALL_PHOTOS";
 const receiveAllPhotos = (photos) => {
   return{
     type: RECEIVE_ALL_PHOTOS,
     photos
   }
 }
-
+// receive all photos thunk
 export const fetchPhotos = () => async (dispatch) => {
   try {
     const res = await fetch("/api/photos");
@@ -48,36 +53,112 @@ export const fetchPhotos = () => async (dispatch) => {
     console.error(err);
   }
 };
+ 
+const RECEIVE_PHOTO = "RECEIVE_PHOTO";
+// receive single photos action
+ const receivePhoto = (photo) => ({
+   type: RECEIVE_PHOTO,
+   photo,
+ });
 
- const receivePhotosByUser = (photos) => {
+ // receive single photos thunk
+export const fetchPhoto = (id) => async (dispatch) => {
+  try {
+    const res = await fetch(`/api/photos/${id}`);
+    const photos = res.data;
+    dispatch(receivePhoto(photos.photo));
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+// receive single photos action by user
+const GET_USER_PHOTOS = "photos/getByUser";
+const userPhotos = (photos) => {
   return {
-    type: RECEIVE_PHOTOS_BY_USER,
-    photos,
+    type: GET_USER_PHOTOS,
+    payload: photos,
   };
 };
 
- const receivePhoto = (photo) => ({
-  type: RECEIVE_PHOTO,
-  photo,
-});
+// receive photos by user thunk
+export const fetchPhotosByUser = (id) => async (dispatch) => {
+  const response = await fetch(`/api/photos/${id}`);
+  dispatch(userPhotos(response.data));
+  return response;
+};
 
- const deletePhoto = (photoId) => ({
-  type: DELETE_PHOTO,
-  photoId,
-});
-
-
-
-
-// export const fetchPhoto = (id) => async (dispatch) => {
+// export const fetchPhotoByUser = (id) => async (dispatch) => {
 //   try {
-//     const res = await fetch(`/api/photos/${id}`);
+//     const res = await fetch(`/api/photos/${id}/`);
 //     const photos = res.data;
-//     dispatch(receivePhoto(photos.photo));
+//     dispatch(receivePhotosByUser(photos));
+//     return photos
 //   } catch (err) {
 //     console.error(err);
 //   }
 // };
+
+const updateState = (photos) => {
+  return {
+    type: UPDATE_STATE,
+    payload: photos,
+  };
+};
+export const updatingState = (userId) => async (dispatch) => {
+  const res = await fetch(`/api/profile/photos/${userId}`);
+  if (res) {
+    dispatch(updateState(res.data.photos));
+    return res;
+  }
+};
+
+
+const getState = () => {
+  return {
+    type: GET_STATE,
+  };
+};
+export const gettingState = () => (dispatch) => {
+  dispatch(getState());
+  return;
+};
+
+
+const deletePhoto = () => {
+  return {
+    type: DELETE_PHOTO,
+  };
+};
+
+const DELETE_PHOTO = "DELETE_PHOTO";
+export const deleteOnePhoto = ({ id, userId }) => async (dispatch) => {
+  const res = await fetch(`/api/photo/${id}`, {
+    method: "DELETE",
+  });
+  dispatch(deletePhoto());
+  // updatingState(userId);
+  return res;
+};
+
+export const reset = () => (dispatch) => {
+  dispatch(reset());
+  return;
+};
+
+
+
+// delete photo thunk
+// export const deletePhoto = () => async (dispatch) => {
+//   const photos = await fetch("/api/photos", {
+//     method: "DELETE",
+//   });
+//   dispatch(receiveAllPhotos(photos));
+//   return photos;
+// }
+
+
+
 
 
 // export const fetchUserPhotos= (ownerId)=> async (dispatch) => {
@@ -119,35 +200,33 @@ export const fetchPhotos = () => async (dispatch) => {
 //     dispatch(receivePhoto(payload))
 //   );
 
-// export const removePhoto = (id) => {
-//   return async (dispatch) => {
-//     const res = await fetch(`/api/photos/${id}`, {
-//       method: "delete",
-//       headers: {
-//         "XSRF-TOKEN": Cookies.get("XSRF-TOKEN"),
-//       },
-//     });
-//     res.data = await res.json();
-//     if (!res.ok) throw res;
-//     if (res.ok) {
-//       dispatch(deletePhoto(id));
-//     }
-//   };
-// };
 
 
-const photosReducer=(state = [], action)=> {
+let initialState = { photos: [] };
+
+
+const photosReducer = (state = initialState, action) => {
+  let newState
+ // console.log(action)
   switch (action.type) {
     case RECEIVE_ALL_PHOTOS:
       return { ...state, list: action.photos };
     case RECEIVE_PHOTO:
       return { ...state, single: action.photo };
-    case RECEIVE_PHOTOS_BY_USER:
-      return { ...state, users: action.photos };
+    case GET_USER_PHOTOS:
+      return { ...state, list: action.photos };
     case POST_PHOTO:
-      return { ...state, users: action.photos };
+      return { ...state, [action.photo.photo.id]: action.photo };
+    case UPDATE_STATE:
+      newState = { photos: [...action] };
+      return newState;
+    case GET_STATE:
+      return state;
     case DELETE_PHOTO:
-      return { ...state, users: action.photos };
+      // const index = state.indexOf(action.fruit)
+      // if (index !== -1) return [...state.slice(0,index), ...state.slice(index + 1)]
+      newState = { photos: [] };
+      return newState;
     default:
       return state;
   }
