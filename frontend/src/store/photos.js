@@ -152,7 +152,7 @@ const photosReducer = (state = initialState, action) => {
     case RECEIVE_PHOTO:
       return { ...state, single: action.photo };
     case LOAD_PHOTOS_BY_USER:
-      return action.photos.photos.filter((data, i) => { return data.userId === 6 })
+      return action.photos.photos.filter((data, i) => { return data.userId === 1 })
     //  return action.photos.photos.filter((data, i) => {
       //  console.log(data);
       //  return data.userId === action.user.userId;
