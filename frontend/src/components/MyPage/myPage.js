@@ -27,11 +27,7 @@ function PhotoFeedByUser() {
     return null;
   }
 
-  // const handleClick = (e) => {
-  //   let photoId = photoList.photo.photo.id
-  //   console.log(photo.id);
-  //       history.push(`/photos/${photoId}`);
-  //   };
+  
 
   return (
     <>

@@ -68,36 +68,50 @@ const UploadFormPage = () => {
   
   return (
     <div align="center">
-      <form onSubmit={handleCloudSubmitFile} className="form">
-        <input
-          type="file"
-          name="image"
-          onChange={handleFileInputChange}
-          value={fileInputState}
-          className="form-input"
-        />
-        <button className="btn" type="submit">
-          submit
-        </button>
-
-        <input
-          placeholder="Enter Title"
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-        />
-        <input
-          placeholder="Enter Description"
-          type="text"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          required
-        />
-      </form>
-      {previewSource && (
-        <img src={previewSource} alt="chosen" style={{ height: "300px" }} />
-      )}
+      <div className="loginform_container">
+        <form onSubmit={handleCloudSubmitFile} className="home_content-form">
+          <div className="form">
+            <h1 className="loginform_title">Upload Photo</h1>
+            <div className="loginform_subheading"></div>
+            <div className="form_input-container">
+              <label></label>
+              <input
+                placeholder="Enter Title"
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                required
+              />
+            </div>
+            <div className="form_input-container">
+              <label></label>
+              <input
+                placeholder="Enter Description"
+                type="text"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                required
+              />
+            </div>
+            <div className="form_input-container">
+              <label></label>
+              <input
+                type="file"
+                name="image"
+                onChange={handleFileInputChange}
+                value={fileInputState}
+                className="form-input"
+              />
+            </div>
+            <button className="loginbtn" type="submit">
+              submit
+            </button>
+          </div>
+        </form>
+        {previewSource && (
+          <img src={previewSource} alt="chosen" style={{ height: "300px" }} />
+        )}
+      </div>
     </div>
   );
 };

@@ -7,8 +7,7 @@ import * as photoActions from '../../store/photos'
 
 
 function PhotoFeed() {
-  // const history = useHistory();
-  // const [photos, setPhotos] = useState({}); 
+
   const dispatch = useDispatch();
 
   useEffect(() => {

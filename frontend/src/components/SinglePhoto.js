@@ -17,10 +17,21 @@ function SinglePhoto() {
 
   const user = useSelector((state) => state.session.user);
   const photo = useSelector((state) => state.photos.single);
-  const comment = useSelector((state) => state.photos.comment)
-
+  const comment = useSelector((state) => state.photos.comment);
+  const [errors, setErrors] = useState([]);
   
-  if (!photo) return null
+  const handleClick = (e) => {
+    let photoId = photo.id
+    console.log(photoId)
+    setErrors([]);
+    return dispatch(photoActions.deleteOnePhoto(photoId)).catch(
+      (res) => {
+        if (res.data && res.data.errors) setErrors(res.data.errors);
+      }
+    );
+  };
+
+  if (!photo) return null;
 
   return (
     <>
@@ -28,17 +39,11 @@ function SinglePhoto() {
         {photo.title} by {photo.User.username}
       </h1>
       <h3 className="deleteButton">{photo.description}</h3>
-      <button className="deleteButton">delete </button>
+      <button className="deleteButton" onClick={handleClick}>delete </button>
       <button className="deleteButton">comment</button>
       <div div className="grid-container">
         <NavLink to={"/photo/:id"}>
-          <img
-            src={photo.photoUrl}
-            width="800"
-            crop="scale"
-            alt="image"
-            key={photo.id}
-          ></img>
+          <img src={photo.photoUrl} width="800" crop="scale" alt="image" key={photo.id}></img>
         </NavLink>
       </div>
     </>
