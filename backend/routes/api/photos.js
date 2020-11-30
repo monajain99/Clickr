@@ -55,28 +55,45 @@ router.get(
   handleValidationErrors,
   asyncHandler(async (req, res, next) => {
     const photoId = req.params.id;
-    const photo = await Photo.findByPk(photoId, { include: [{ all: true }] });
+    const photo = await Photo.scope("main").findByPk(photoId, {
+      include: [{ all: true }],
+    });
     
     res.json({ photo });
-    console.log(photo.Comments[0])
  
 
   })
 );
 
-//  get from database by user
-router.get(
-  "/",
-  handleValidationErrors,
-  asyncHandler(async (req, res, next) => {
-    const photo = await Photo.findByUserID(userId, {
-      include: User,
-      include: Comment,
+router.post(
+  "/:id/comment",
+  asyncHandler(async (req, res) => {
+    const id = req.params.id;
+    const { comment, userId } = req.body;
+    const newComment = await Comment.addAComment({
+      comment,
+      userId,
+      photoId: id,
     });
-
-    res.json({ photo });
+    return res.json({
+      comment: newComment,
+    });
   })
 );
+
+//  get from database by user
+// router.get(
+//   "/",
+//   handleValidationErrors,
+//   asyncHandler(async (req, res, next) => {
+//     const photo = await Photo.findByUserID(userId, {
+//       include: User,
+//       include: Comment,
+//     });
+
+//     res.json({ photo });
+//   })
+// );
 
 // export const findByUserID = (id) => async (dispatch) => {
 //   const response = await fetch(`/api/photos/${id}`);
@@ -90,7 +107,10 @@ router.delete(
   "/:id",
   asyncHandler(async (req, res) => {
     const id = req.params.id;
-    const message = await Photo.removePhoto({ id });
+    await Photo.destroy({
+      where: { id },
+    });
+    const message = "Photo Deleted";
     return res.json({
       message,
     });

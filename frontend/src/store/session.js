@@ -71,6 +71,30 @@ export const logout = () => async (dispatch) => {
   return response;
 };
 
+export const getUsers = () => {
+  return async (dispatch) => {
+    const res = await fetch("/api/users", {
+      method: "get",
+    });
+    res.data = await res.json();
+    if (res.ok) {
+      dispatch(setSession(res.data.users));
+    }
+    return res;
+  };
+};
+
+export const getUser = (id) => {
+  return async (dispatch) => {
+    const res = await fetch(`/api/users/${id}`);
+    res.data = await res.json();
+    if (res.ok) {
+      dispatch(setSession(res.data.user));
+    }
+    return res;
+  };
+};
+
 const sessionReducer = (state = {}, action) => {
   switch (action.type) {
     case SET_SESSION:

@@ -17,6 +17,8 @@ export const fetch = async (url, options = {}) => {
   // call the default window's fetch with the url and the options passed in
   
   
+  
+  
   const res = await window.fetch(url, options);
 
   // if the response's body is JSON, then parse the JSON body and set it to a

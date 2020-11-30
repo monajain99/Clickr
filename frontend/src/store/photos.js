@@ -1,11 +1,6 @@
 import { fetch } from "./csrf";
 import * as commentActions from './comment';
 
-
-const UPDATE_STATE = "UPDATE_STATE";
-const GET_STATE = "GET_STATE";
-
-
 //post photo action
 const POST_PHOTO = "POST_PHOTO";
 const postBody = (photo) => {
@@ -72,32 +67,29 @@ export const fetchPhoto = (id) => async (dispatch) => {
   }
 };
 
-// receive single photos action by user
-const GET_USER_PHOTOS = "photos/getByUser";
-const userPhotos = (photos) => {
+
+const UPDATE_STATE = "UPDATE_STATE";
+const GET_STATE = "GET_STATE";
+// receive photos action by user
+const LOAD_PHOTOS_BY_USER = "LOAD_PHOTOS_BY_USER";
+const loadPhotosByUser = (photos) => {
   return {
-    type: GET_USER_PHOTOS,
-    payload: photos,
+    type: LOAD_PHOTOS_BY_USER,
+    photos,
   };
 };
 
 // receive photos by user thunk
-export const fetchPhotosByUser = (id) => async (dispatch) => {
-  const response = await fetch(`/api/photos/${id}`);
-  dispatch(userPhotos(response.data));
-  return response;
+export const getPhotosByUserId = () => async (dispatch) => {
+  try {
+    const res = await fetch("/api/photos");
+    const photos = res.data;
+    dispatch(loadPhotosByUser(photos));
+  } catch (err) {
+    console.error(err);
+  }
 };
 
-// export const fetchPhotoByUser = (id) => async (dispatch) => {
-//   try {
-//     const res = await fetch(`/api/photos/${id}/`);
-//     const photos = res.data;
-//     dispatch(receivePhotosByUser(photos));
-//     return photos
-//   } catch (err) {
-//     console.error(err);
-//   }
-// };
 
 const updateState = (photos) => {
   return {
@@ -105,7 +97,8 @@ const updateState = (photos) => {
     payload: photos,
   };
 };
-export const updatingState = (userId) => async (dispatch) => {
+
+  export const updatingState = (userId) => async (dispatch) => {
   const res = await fetch(`/api/profile/photos/${userId}`);
   if (res) {
     dispatch(updateState(res.data.photos));
@@ -133,7 +126,7 @@ const deletePhoto = () => {
 
 const DELETE_PHOTO = "DELETE_PHOTO";
 export const deleteOnePhoto = ({ id, userId }) => async (dispatch) => {
-  const res = await fetch(`/api/photo/${id}`, {
+  const res = await fetch(`/api/photos/${id}`, {
     method: "DELETE",
   });
   dispatch(deletePhoto());
@@ -148,73 +141,24 @@ export const reset = () => (dispatch) => {
 
 
 
-// delete photo thunk
-// export const deletePhoto = () => async (dispatch) => {
-//   const photos = await fetch("/api/photos", {
-//     method: "DELETE",
-//   });
-//   dispatch(receiveAllPhotos(photos));
-//   return photos;
-// }
-
-
-
-
-
-// export const fetchUserPhotos= (ownerId)=> async (dispatch) => {
-//   try {
-//     const res = await fetch(`/api/users/${id}/photos`);
-//     const photos = res.data;
-//       dispatch(receivePhotosByUser(photos.photos));
-//     } catch (err) {
-//     console.error(err);
-//   }
-// };
-
-// export const uploadPhoto = (file, currentUserId, description) => {
-//   let formData = new FormData();
-
-//   formData.append("description", description);
-//   formData.append("id", currentUserId);
-//   formData.append("file", file.raw, file.raw.name);
-
-//   let config = {
-//     headers: {
-//       "Content-Type": "multipart/form-data",
-//     },
-//   };
-
-//   return async (dispatch) => {
-//     const res = await axios.post(`/api/photos/`, formData, config);
-//     if (res) {
-//       const photo = res.data.photo;
-//       dispatch(receivePhoto(photo));
-//     }
-
-//     return res;
-//   };
-// };
-
-// export const updatePhoto = (photo, id) => (dispatch) =>
-//   PhotoAPI.updatePhoto(photo, id).then((payload) =>
-//     dispatch(receivePhoto(payload))
-//   );
-
-
-
 let initialState = { photos: [] };
 
 
 const photosReducer = (state = initialState, action) => {
   let newState
- // console.log(action)
   switch (action.type) {
     case RECEIVE_ALL_PHOTOS:
       return { ...state, list: action.photos };
     case RECEIVE_PHOTO:
       return { ...state, single: action.photo };
-    case GET_USER_PHOTOS:
-      return { ...state, list: action.photos };
+    case LOAD_PHOTOS_BY_USER:
+      return action.photos.photos.filter((data, i) => { console.log(state.user); return data.userId === 4 })
+    //  return action.photos.photos.filter((data, i) => {
+      //  console.log(data);
+      //  return data.userId === action.user.userId;
+    //  });
+    //  return { ...state, users: action.photos };
+    //    return { ...state, list: action.photos };
     case POST_PHOTO:
       return { ...state, [action.photo.photo.id]: action.photo };
     case UPDATE_STATE:

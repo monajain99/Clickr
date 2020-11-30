@@ -22,5 +22,14 @@ router.get(
   })
 );
 
+router.get(
+  "/photos/:id",
+  asyncHandler(async (req, res) => {
+    const id = req.params.id;
+    const userId = id;
+    const photos = await Photo.profilePhotos(userId);
+    return res.json({ photos });
+  })
+);
 
 module.exports = router;

@@ -8,17 +8,7 @@ module.exports = {
       [
         {
           comment: "Best award photo",
-          photoId: 2,
-          userId: 1,
-        },
-        {
-          comment: "Best award photo1",
-          photoId: 80,
-          userId: 1,
-        },
-        {
-          comment: "Best award photo2",
-          photoId: 84,
+          photoId: 3,
           userId: 1,
         },
       ],
@@ -33,8 +23,6 @@ module.exports = {
         comment: {
           [Op.in]: [
             "My Best award photo",
-            "My Best award photo1",
-            "Best award photo2",
           ],
         },
       },

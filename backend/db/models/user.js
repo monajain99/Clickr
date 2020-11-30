@@ -15,8 +15,8 @@ module.exports = (sequelize, DataTypes) => {
       return User.scope("currentUser").findByPk(id);
     }
     static async login({ credential, password }) {
-      const { Op } = require('sequelize');
-      const user = await User.scope('loginUser').findOne({
+      const { Op } = require("sequelize");
+      const user = await User.scope("loginUser").findOne({
         where: {
           [Op.or]: {
             username: credential,
@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
         },
       });
       if (user && user.validatePassword(password)) {
-        return await User.scope('currentUser').findByPk(user.id);
+        return await User.scope("currentUser").findByPk(user.id);
       }
     }
     static async signup({ username, email, password }) {
@@ -35,8 +35,13 @@ module.exports = (sequelize, DataTypes) => {
         email,
         hashedPassword,
       });
-      return await User.scope('currentUser').findByPk(user.id);
-    };
+      return await User.scope("currentUser").findByPk(user.id);
+    }
+    static async getUser(id) {
+      const user = await User.scope("profile").findByPk(id);
+      return user;
+    }
+
     static associate(models) {
       // define association here
     }
@@ -83,6 +88,9 @@ module.exports = (sequelize, DataTypes) => {
           attributes: { exclude: ["hashedPassword"] },
         },
         loginUser: {
+          attributes: {},
+        },
+        profile: {
           attributes: {},
         },
       },

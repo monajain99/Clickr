@@ -58,12 +58,6 @@ const UploadFormPage = () => {
     }).catch(() => {
       alert('Error')
       }
-        
-      //   (res) => {
-      //     console.log("rrrrreeessss", res)
-      //     if (res.data && res.data.errors);
-      //     <Redirect to="/explore" />;
-      //  } 
      );
   };
 

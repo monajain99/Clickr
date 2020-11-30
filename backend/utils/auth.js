@@ -49,19 +49,19 @@ const restoreUser = (req, res, next) => {
   });
 };
 
-const getUser=(req, _res, next) => {
-  const { token } = req.cookies;
-  if (!token) {
-    return next();
-  }
-  return jwt.verify(token, secret, null, async (err, payload) => {
-    if (!err) {
-      const userId = payload.data.id;
-      req.user = await User.getCurrentUserById(userId);
-    }
-    return next();
-  });
-}
+// const getUser=(req, _res, next) => {
+//   const { token } = req.cookies;
+//   if (!token) {
+//     return next();
+//   }
+//   return jwt.verify(token, secret, null, async (err, payload) => {
+//     if (!err) {
+//       const userId = payload.data.id;
+//       req.user = await User.getCurrentUserById(userId);
+//     }
+//     return next();
+//   });
+// }
 
 // If there is no current user, return an error
 const requireAuth = [
@@ -77,4 +77,4 @@ const requireAuth = [
   },
 ];
 
-module.exports = { setTokenCookie, restoreUser, requireAuth, getUser };
+module.exports = { setTokenCookie, restoreUser, requireAuth };

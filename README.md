@@ -29,35 +29,6 @@ Built using React, Redux for the frontend and Express, PostgreSQL + Sequelize fo
 
 
   
-2. Photos:
-    - Users should be able to create photos
-    - Users should be able to update photos
-    - Users should be able to upload photos
-    - Users should be able to delete photos
-
-<!-- 2. Albums:
-    - Users should be able to create Albums
-    - Users should be able to update Albums
-    - Users should be able to upload Albums
-    - Users should be able to delete Albums -->
-
-2. Comments:
-    - Users should be able to create Comments
-    - Users should be able to update Comments
-    - Users should be able to upload Comments
-    - Users should be able to delete Comments
-
-2. Tags:
-    - Users should be able to create photos
-    - Users should be able to update photos
-    - Users should be able to upload photos
-    - Users should be able to delete photos
-
-Bonus
-
-1. Favorites
-
-2. Follows
 
 ## Database Schema
 

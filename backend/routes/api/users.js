@@ -27,7 +27,7 @@ const validateSignup = [
 
 // Sign up
 router.post(
-  "",
+  "/",
   validateSignup,
   asyncHandler(async (req, res) => {
     const { email, password, username } = req.body;
@@ -41,27 +41,27 @@ router.post(
   })
 );
 
-router.get(
-  "/",
-  asyncHandler(async (req, res) => {
-    const users = await User.findAll({ order: [["createdAt", "DESC"]] });
+// router.get(
+//   "/",
+//   asyncHandler(async (req, res) => {
+//     const users = await User.findAll({ order: [["createdAt", "DESC"]] });
 
-    res.json(users);
-  })
-);
+//     res.json(users);
+//   })
+// );
 
-router.get(
-  "/:id/photos",
-  asyncHandler(async function (req, res, _next) {
-    const userId = req.params.id;
-    const photos = await Photo.findAll({
-      where: {
-        userId,
-      },
-    });
-    res.json({ photos });
-  })
-);
+// router.get(
+//   "/:id/photos",
+//   asyncHandler(async function (req, res, _next) {
+//     const userId = req.params.id;
+//     const photos = await Photo.findAll({
+//       where: {
+//         userId,
+//       },
+//     });
+//     res.json({ photos });
+//   })
+// );
 
 
 module.exports = router;

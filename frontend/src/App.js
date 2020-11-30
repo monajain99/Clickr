@@ -6,6 +6,7 @@ import LoginFormPage from "./components/LoginFormPage/LoginFormPage";
 import SignupFormPage from "./components/SignupFormPage/SignupFormPage";
 import PhotoFeed from "./components/ExplorePage/Explore"
 import * as sessionActions from "./store/session";
+import * as photoActions from "./store/photos"
 import Navigation from "./components/Navigation/index"
 import UploadFormPage from "./components/UploadPhoto/UploadPhoto"
 import Images from "./components/Images";
@@ -73,7 +74,9 @@ function App() {
               <Route exact path="/uploadPhoto">
                 <UploadFormPage />
               </Route>
-              <Route exact path="/photo/:id" component={SinglePhoto}></Route>
+              <Route exact path="/photo/:id">
+                <SinglePhoto/>
+                </Route>
               <Route exact path="/myphotos">
                 <PhotoFeedByUser />
               </Route>

@@ -1,60 +1,63 @@
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Link, Redirect, useHistory } from "react-router-dom";
+
+import React from "react";
+import { Link, Redirect, } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import * as photoActions from "../../store/photos";
-import Photo from "../ExplorePage/Explore";
+import { getUser } from "../../store/session";
+
+function PhotoFeedByUser() {
+  // const [photos, setPhotos] = useState({});
+  let user = useSelector((state) => state.session.user);
+  
 
 
-const PhotoFeedByUser = () => {
   const dispatch = useDispatch();
-  const [photos, setPhotos] = useState([]);
-  const [users, setUsers] = useState([]);
-
-  const user = useSelector((state) => {
-    return state.session.user;
-  });
-
-  const history = useHistory();
 
   useEffect(() => {
-    dispatch(photoActions.fetchPhotos());
+    dispatch(getUser(user.id))
+    dispatch(photoActions.getPhotosByUserId());
   }, [dispatch]);
-  // const user = useSelector((state) => state.session.user);
-  const photoList = useSelector((state) => state.photos.list);
 
-  console.log('photolist',photoList);
+  const photoList = useSelector((state) => state.photos);
 
-  // const myItems = photoList;
-  // console.log("myItems", myItems);
-  // // const newArray =
-  // const newArray = myItems.photos.filter((item) => item.userId === user.id);
-  // console.log("newArray", newArray);
-
-  // setPhotos({
-  // photos: newArray
-  // })
 
   if (!user) return <Redirect to="/" />;
 
   if (!photoList) {
-    console.log("no photos");
 
     return null;
   }
 
+  // const handleClick = (e) => {
+  //   let photoId = photoList.photo.photo.id
+  //   console.log(photo.id);
+  //       history.push(`/photos/${photoId}`);
+  //   };
+
   return (
-    <grid-container>
-      {Object.values(photoList.photos).map((photo, index) => {
-        //   console.log(photo.title);
-        let link = `${photo.photoUrl}`;
-        return (
-          <Link>
-            <img src={link} key={photo.id} width="300" crop="scale"></img>
-          </Link>
-        );
-      })}
-    </grid-container>
+    <>
+    <div div className="grid-container">
+      {
+        Object.values(photoList).map((photo, index) => {
+          let link = `${photo.photoUrl}`;
+          let id = `${photo.id}`;
+          return (
+            <Link to={`/photo/${id}`}>
+              <img
+                src={link}
+                key={photo.id}
+                width="300"
+                crop="scale"
+                alt=""
+                // onClick={handleClick}
+              />
+            </Link>
+          );
+        })}
+      </div>
+      </>
   );
-};
+}
 
 export default PhotoFeedByUser;
