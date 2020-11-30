@@ -7,19 +7,8 @@ module.exports = {
         {
           title: "My Photo",
           description: "Best award photo",
-          photoUrl: "www.google.com",
-          userId: 1
-        },
-        {
-          title: "My Photo1",
-          description: "Best award photo",
-          photoUrl: "www.google.com",
-          userId: 1
-        },
-        {
-          title: "My Photo2",
-          description: "Best award photo2",
-          photoUrl: "www.google.com",
+          photoUrl:
+            "$2a$10$FaRJtHNhVUGlaDwoue/Y4er5BKeHEt41vNgSfH00vROLVI5GJ.Dbm",
           userId: 1,
         },
       ],
@@ -32,7 +21,7 @@ module.exports = {
     return queryInterface.bulkDelete(
       "Photos",
       {
-        title: { [Op.in]: ["My Photo", "My Photo1", "Photo2"] },
+        title: { [Op.in]: ["My Photo"] },
       },
       {}
     );
