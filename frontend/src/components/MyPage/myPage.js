@@ -1,10 +1,9 @@
 
 import React from "react";
 import { Link, Redirect, } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import * as photoActions from "../../store/photos";
-import { getUser } from "../../store/session";
 
 function PhotoFeedByUser() {
   // const [photos, setPhotos] = useState({});
@@ -15,7 +14,6 @@ function PhotoFeedByUser() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getUser(user.id))
     dispatch(photoActions.getPhotosByUserId());
   }, [dispatch]);
 
@@ -43,7 +41,7 @@ function PhotoFeedByUser() {
           let link = `${photo.photoUrl}`;
           let id = `${photo.id}`;
           return (
-            <Link to={`/photo/${id}`}>
+            <Link to={`/photo/${id}`} key={photo.id}>
               <img
                 src={link}
                 key={photo.id}

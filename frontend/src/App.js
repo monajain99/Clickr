@@ -1,15 +1,13 @@
   
 import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Route, Switch, useLocation } from "react-router-dom";
 import LoginFormPage from "./components/LoginFormPage/LoginFormPage";
 import SignupFormPage from "./components/SignupFormPage/SignupFormPage";
 import PhotoFeed from "./components/ExplorePage/Explore"
 import * as sessionActions from "./store/session";
-import * as photoActions from "./store/photos"
 import Navigation from "./components/Navigation/index"
 import UploadFormPage from "./components/UploadPhoto/UploadPhoto"
-import Images from "./components/Images";
 import SinglePhoto from "./components/SinglePhoto"
 import PhotoFeedByUser from "./components/MyPage/myPage";
 
@@ -20,18 +18,12 @@ function App() {
   const dispatch = useDispatch();
   const location = useLocation()
   const [isLoaded, setIsLoaded] = useState(false);
-  const [background, setBackground] = useState("idbackground");
+  // const [background, setBackground] = useState("idbackground");
+  
   useEffect(() => {
     dispatch(sessionActions.restoreUser()).then(() => setIsLoaded(true));
   }, [dispatch]);
   
-  const user = useSelector((state) => state.session.user)
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     setBackground()
-  //   })
-  // })
-
   const backgroundClass = () => {
     if (
       location.pathname === "/" ||
@@ -55,7 +47,8 @@ function App() {
   };
 
  
-    return (
+  return (
+      <>
       <div className="wrapper">
         <div className={backgroundClass()}>
           <div className={inspire()}></div>
@@ -84,6 +77,7 @@ function App() {
           </>
         </div>
       </div>
+      </>
     );
 }
 
